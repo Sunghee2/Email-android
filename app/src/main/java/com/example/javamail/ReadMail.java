@@ -9,11 +9,13 @@ import javax.mail.Flags.Flag;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPMessage;
@@ -56,12 +58,29 @@ public class ReadMail extends AsyncTask<Void, Void, Void> {
                     Message msg = messages[i];
                     subject = msg.getSubject();
 
+                    String contentType = msg.getContentType();
+                    String messageContent = "";
+
+                    if(contentType.contains("multipart")) {
+                        Multipart multipart = (Multipart) msg.getContent();
+                        int numberOfParts = multipart.getCount();
+                        for(int partCount = 0; partCount < numberOfParts; partCount++) {
+                            MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
+                            messageContent = part.getContent().toString();
+                        }
+                    } else if(contentType.contains("text/plain") || contentType.contains("text/html")) {
+                        Object content = msg.getContent();
+                        if(content != null) {
+                            messageContent = content.toString();
+                        }
+                    }
+
                     Log.e("email!!", "Subject : " + subject);
                     Log.e("email!!", "From : " + msg.getFrom()[0]);
                     Log.e("email!!", "To : " + msg.getAllRecipients()[0]);
                     Log.e("email!!", "Date : " + msg.getReceivedDate());
                     Log.e("email!!", "Size : " + msg.getSize());
-                    Log.e("email!!", "Body : \n" + msg.getContent());
+                    Log.e("email!!", "Body : \n" + messageContent);
                     Log.e("email!!", msg.getContentType());
                 }
             }
