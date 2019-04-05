@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">JavaMail</string>
+    <string name="app_name">GMail</string>
+    <string name="sub_name">Send Email</string>
 </resources>

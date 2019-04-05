@@ -21,7 +21,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SubActivity"/>
+        <activity
+            android:name=".SubActivity"
+            android:label="@string/sub_name"/>
     </application>
 
 </manifest>
