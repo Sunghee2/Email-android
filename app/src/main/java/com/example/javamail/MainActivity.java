@@ -11,17 +11,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.AbsListView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
@@ -30,12 +27,9 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fab;
     private RecyclerView recyclerView;
-    private ProgressBar progressBar;
-    private LinearLayoutManager manager;
-    private Adapter adapter;
-    private Boolean isScrolling = false;
-    private int currentItem, totalItems, scrollOutItems;
-    private ArrayList list;
+    private ArrayList<HashMap<String, String>> getDatalist;
+    private RecyclerViewAdapter mAdapter;
+    private Random random;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,65 +51,75 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        random = new Random();
+
+        getDatalist = new ArrayList<>();
+        for (int aind = 0; aind < 20; aind++) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("KEY_EMAIL", "android" + aind + "@gmail.com");
+            map.put("KEY_PHONE", phoneNumberGenerating());
+            getDatalist.add(map);
+        }
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        progressBar = (ProgressBar) findViewById(R.id.progress);
-        manager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false));
 
-        String[] a = {"25", "91", "65", "4", "60", "67", "56", "1", "80", "38", "1", "2", "3", "4", "5"};
-        list = new ArrayList(Arrays.asList(a));
+        mAdapter = new RecyclerViewAdapter(MainActivity.this, getDatalist, recyclerView);
+        recyclerView.setAdapter(mAdapter);
 
-        adapter = new Adapter(list, this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(manager);
-
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mAdapter.setOnItemListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                    isScrolling = true;
-                }
-            }
+            public void onItemClick(HashMap<String, String> item) {
+                String mEmail = "";
+                String mPhone = "";
 
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                currentItem = manager.getChildCount();
-                totalItems = manager.getItemCount();
-                scrollOutItems = manager.findFirstVisibleItemPosition();
-
-                if(isScrolling && (currentItem + scrollOutItems == totalItems)) {
-                    isScrolling = false;
-                    fetchData();
+                try {
+                    mEmail = item.get("KEY_EMAIL");
+                    mPhone = item.get("KEY_PHONE");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                Toast.makeText(MainActivity.this, "Clicked row: \nEmail: " + mEmail + ", Phone: " + mPhone, Toast.LENGTH_LONG).show();
             }
         });
 
-//        ReadMail rm = new ReadMail();
-//        rm.execute();
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
+        mAdapter.setOnLoadMoreListener(new RecyclerViewAdapter.OnLoadMoreListener() {
             @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SubActivity.class));
+            public void onLoadMore() {
+                if (getDatalist.size() <= 40) {
+                    getDatalist.add(null);
+                    mAdapter.notifyItemInserted(getDatalist.size() - 1);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            getDatalist.remove(getDatalist.size() - 1);
+                            mAdapter.notifyItemRemoved(getDatalist.size());
+
+                            int index = getDatalist.size();
+                            int end = index + 20;
+                            for (int i = index; i < end; i++) {
+                                HashMap<String, String> map = new HashMap<>();
+                                map.put("KEY_EMAIL", "android" + i + "@gmail.com");
+                                map.put("KEY_PHONE", phoneNumberGenerating());
+                                getDatalist.add(map);
+                            }
+                            mAdapter.notifyDataSetChanged();
+                            mAdapter.setLoaded();
+                        }
+                    }, 5000);
+                } else {
+                    Toast.makeText(MainActivity.this, "Loading data completed", Toast.LENGTH_LONG).show();
+                }
             }
         });
-
     }
 
-    private void fetchData() {
-        progressBar.setVisibility(View.VISIBLE);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                for(int i = 0; i < 5; i++) {
-                    list.add(Math.floor(Math.random()*100) + "");
-                    adapter.notifyDataSetChanged();
-                    progressBar.setVisibility(View.GONE);
-                }
-            }
-        }, 5000);
+    private String phoneNumberGenerating() {
+        int low = 100000000;
+        int high = 999999999;
+        int randomNumber = random.nextInt(high - low) + low;
+
+        return "0" + randomNumber;
     }
 }
+
