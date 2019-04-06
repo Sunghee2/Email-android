@@ -1,4 +1,4 @@
-package com.example.javamail;
+package com.example.javamail.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -11,19 +11,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Random;
+import com.example.javamail.Constants;
+import com.example.javamail.Message;
+import com.example.javamail.R;
+import com.example.javamail.ReadMail;
+import com.example.javamail.RecyclerViewAdapter;
 
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
