@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
@@ -27,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fab;
     private RecyclerView recyclerView;
-    private ArrayList<HashMap<String, String>> getDatalist;
+    private ArrayList<Message> getDatalist;
     private RecyclerViewAdapter mAdapter;
     private Random random;
 
@@ -51,14 +53,26 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        ReadMail rm = new ReadMail();
+        ArrayList<Message> messages = new ArrayList<>();
+        try {
+            messages = rm.execute(0).get();
+//            for(int i = 0; i < messages.size(); i++) {
+//                try {
+//                    String subject = messages.get(i).getSubject();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         random = new Random();
 
         getDatalist = new ArrayList<>();
-        for (int aind = 0; aind < 20; aind++) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put("KEY_EMAIL", "android" + aind + "@gmail.com");
-            map.put("KEY_PHONE", phoneNumberGenerating());
-            getDatalist.add(map);
+        for (int index = 0; index < 10; index++) {
+            getDatalist.add(messages.get(index));
         }
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -69,13 +83,13 @@ public class MainActivity extends AppCompatActivity {
 
         mAdapter.setOnItemListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(HashMap<String, String> item) {
+            public void onItemClick(Message msg) {
                 String mEmail = "";
                 String mPhone = "";
 
                 try {
-                    mEmail = item.get("KEY_EMAIL");
-                    mPhone = item.get("KEY_PHONE");
+                    mEmail = msg.getSubject();
+                    mPhone = msg.getBody();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -101,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                                 HashMap<String, String> map = new HashMap<>();
                                 map.put("KEY_EMAIL", "android" + i + "@gmail.com");
                                 map.put("KEY_PHONE", phoneNumberGenerating());
-                                getDatalist.add(map);
+//                                getDatalist.add(map);
                             }
                             mAdapter.notifyDataSetChanged();
                             mAdapter.setLoaded();
@@ -110,6 +124,16 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(MainActivity.this, "Loading data completed", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SubActivity.class));
             }
         });
     }

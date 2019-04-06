@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private ArrayList<HashMap<String, String>> mDataset;
+    private ArrayList<Message> mDataset;
     private Context mcontext;
     private Activity mactivity;
     private OnItemClickListener listener;
@@ -30,25 +30,25 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private int lastVisibleItem, totalItemCount;
 
     public interface OnItemClickListener {
-        void onItemClick(HashMap<String, String> item);
+        void onItemClick(Message msg);
     }
 
     public interface OnLoadMoreListener {
         void onLoadMore();
     }
 
-    public void add(int position, HashMap<String, String> item) {
-        mDataset.add(position, item);
+    public void add(int position, Message msg) {
+        mDataset.add(position, msg);
         notifyItemInserted(position);
     }
 
-    public void remove(HashMap<String, String> item) {
-        int position = mDataset.indexOf(item);
+    public void remove(Message msg) {
+        int position = mDataset.indexOf(msg);
         mDataset.remove(position);
         notifyItemRemoved(position);
     }
 
-    public RecyclerViewAdapter(Context context, ArrayList<HashMap<String, String>> myDataset, RecyclerView recyclerView) {
+    public RecyclerViewAdapter(Context context, ArrayList<Message> myDataset, RecyclerView recyclerView) {
         mcontext = context;
         mactivity = (Activity) context;
         mDataset = myDataset;
@@ -85,12 +85,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ViewHolderRow) {
-            HashMap<String, String> map = mDataset.get(position);
+            Message msg = mDataset.get(position);
 
             ViewHolderRow userviewHolder = (ViewHolderRow) holder;
 
-            userviewHolder.txtEmail.setText(map.get("KEY_EMAIL"));
-            userviewHolder.txtPhone.setText(map.get("KEY_PHONE"));
+            userviewHolder.textViewFrom.setText(msg.getFrom().toString());
+            userviewHolder.textViewDate.setText(msg.getDate().toString());
+            userviewHolder.textViewSubject.setText(msg.getSubject());
+            userviewHolder.textViewBody.setText(msg.getBody().toString());
 
             userviewHolder.bind(mDataset.get(position), listener);
         } else if(holder instanceof ViewHolderLoading) {
@@ -131,19 +133,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public class ViewHolderRow extends RecyclerView.ViewHolder {
-        public TextView txtEmail, txtPhone;
+        public TextView textViewFrom, textViewDate, textViewSubject, textViewBody;
 
         public ViewHolderRow(View view) {
             super(view);
-            txtEmail = (TextView) view.findViewById(R.id.textViewFrom);
-            txtPhone = (TextView) view.findViewById(R.id.textViewSubject);
+            textViewFrom = (TextView) view.findViewById(R.id.textViewFrom);
+            textViewDate = (TextView) view.findViewById(R.id.textViewDate);
+            textViewSubject = (TextView) view.findViewById(R.id.textViewSubject);
+            textViewBody = (TextView) view.findViewById(R.id.textViewBody);
         }
 
-        public void bind(final HashMap<String, String> item, final OnItemClickListener listener) {
+        public void bind(final Message msg, final OnItemClickListener listener) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.onItemClick(item);
+                    listener.onItemClick(msg);
                 }
             });
         }

@@ -23,7 +23,9 @@
             android:id="@+id/textViewFrom"
             android:text="From"
             android:textSize="19sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"/>
         
         <View
             android:layout_width="0dp"
@@ -35,7 +37,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/textViewDate"
             android:text="Date"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
     </LinearLayout>
 
 
@@ -45,7 +49,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/textViewSubject"
         android:text="subject"
-        android:textSize="15sp"/>
+        android:textSize="15sp"
+        android:maxLines="1"
+        android:ellipsize="end"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -53,7 +59,9 @@
         android:paddingBottom="5dp"
         android:id="@+id/textViewBody"
         android:text="body"
-        android:textSize="15sp"/>
+        android:textSize="15sp"
+        android:maxLines="2"
+        android:ellipsize="end"/>
 
     <View
         android:layout_width="match_parent"

@@ -3,108 +3,94 @@ package com.example.javamail;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 
-import javax.mail.Flags.Flag;
 import javax.mail.Folder;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
 import com.sun.mail.imap.IMAPFolder;
-import com.sun.mail.imap.IMAPMessage;
 
-public class ReadMail extends AsyncTask<Void, Void, Void> {
+public class ReadMail extends AsyncTask<Integer, Void, ArrayList<com.example.javamail.Message>> {
     private Session session;
     private Store store;
     private IMAPFolder folder;
     private String subject;
-    private Flag flag;
+    private ArrayList<com.example.javamail.Message> list;
 
     @Override
-    protected Void doInBackground(Void... params) {
-        //Creating properties
+    protected ArrayList<com.example.javamail.Message> doInBackground(Integer... integers) {
         try {
             Properties read_props = new Properties();
 
-            //Configuring properties for gmail
-            //If you are not using gmail you may need to change the values
             read_props.setProperty("mail.store.protocol", "imaps");
 
             session = Session.getDefaultInstance(read_props, null);
 
             store = session.getStore("imaps");
-            store.connect("imap.gmail.com", "630sunghee@gmail.com", "Gybhunji501");
+            store.connect("imap.gmail.com", Config.EMAIL, Config.PASSWORD);
 
             folder = (IMAPFolder) store.getFolder("inbox");
 
             if(!folder.isOpen()) {
                 folder.open(Folder.READ_WRITE);
                 Message[] messages = folder.getMessages();
-                Log.e("email!!", "No of Messages : " + folder.getMessageCount());
-                Log.e("email!!", "No of Unread Messages : " + folder.getUnreadMessageCount());
-                Log.e("email!!", "length : " + messages.length);
-
-                for(int i = messages.length - 1; i >= 0; i--) {
-                    Log.e("email!!", "*****************************************************************************");
+                list = new ArrayList<com.example.javamail.Message>();
+//                Log.e("email!!", "No of Messages : " + folder.getMessageCount());
+//                Log.e("email!!", "No of Unread Messages : " + folder.getUnreadMessageCount());
+//                Log.e("email!!", "length : " + messages.length);
+                Log.e("sdafsfa", "afdasd" + integers[0]);
+                int start_num = messages.length - 1 - Integer.parseInt(integers[0].toString());
+                for(int i = start_num; i >= (start_num - 10 >= 0? start_num - 10 : 0); i--) {
+//                    Log.e("email!!", "*****************************************************************************");
                     Log.e("email!!", "MESSAGE : " + (i + 1) + ":");
 
                     Message msg = messages[i];
+                    Log.e("????", msg.toString());
+                    Log.e("????", msg.getFrom()[0].toString());
                     subject = msg.getSubject();
-
+//
                     String contentType = msg.getContentType();
                     String messageContent = "";
+//
+//                    if(contentType.contains("multipart")) {
+//                        Multipart multipart = (Multipart) msg.getContent();
+//                        int numberOfParts = multipart.getCount();
+//                        for(int partCount = 0; partCount < numberOfParts; partCount++) {
+//                            MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
+//                            messageContent = part.getContent().toString();
+//                        }
+//                    } else if(contentType.contains("text/plain") || contentType.contains("text/html")) {
+//                        Object content = msg.getContent();
+//                        if(content != null) {
+//                            messageContent = content.toString();
+//                        }
+//                    }
 
-                    if(contentType.contains("multipart")) {
-                        Multipart multipart = (Multipart) msg.getContent();
-                        int numberOfParts = multipart.getCount();
-                        for(int partCount = 0; partCount < numberOfParts; partCount++) {
-                            MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
-                            messageContent = part.getContent().toString();
-                        }
-                    } else if(contentType.contains("text/plain") || contentType.contains("text/html")) {
-                        Object content = msg.getContent();
-                        if(content != null) {
-                            messageContent = content.toString();
-                        }
-                    }
+                    list.add(new com.example.javamail.Message(subject, msg.getFrom()[0], msg.getReceivedDate(), messageContent));
 
-                    Log.e("email!!", "Subject : " + subject);
-                    Log.e("email!!", "From : " + msg.getFrom()[0]);
-                    Log.e("email!!", "To : " + msg.getAllRecipients()[0]);
-                    Log.e("email!!", "Date : " + msg.getReceivedDate());
-                    Log.e("email!!", "Size : " + msg.getSize());
-                    Log.e("email!!", "Body : \n" + messageContent);
-                    Log.e("email!!", msg.getContentType());
+//                    Log.e("email!!", "Subject : " + subject);
+//                    Log.e("email!!", "From : " + msg.getFrom()[0]);
+//                    Log.e("email!!", "To : " + msg.getAllRecipients()[0]);
+//                    Log.e("email!!", "Date : " + msg.getReceivedDate());
+//                    Log.e("email!!", "Size : " + msg.getSize());
+//                    Log.e("email!!", "Body : \n" + messageContent);
+//                    Log.e("email!!", msg.getContentType());
                 }
+                Log.e("klhj", "end!!!!!!");
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
         }
 
+        return list;
+    }
 
-//        read_props.put("mail.smtp.host", "smtp.gmail.com");
-//        read_props.put("mail.smtp.socketFactory.port", "465");
-//        read_props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-//        read_props.put("mail.smtp.auth", "true");
-//        read_props.put("mail.smtp.port", "465");
+    protected void onPostExecute(ArrayList<com.example.javamail.Message> list) {
 
-//        //Creating a new session
-//        session = Session.getDefaultInstance(read_props,
-//                new javax.mail.Authenticator() {
-//                    //Authenticating the password
-//                    protected PasswordAuthentication getPasswordAuthentication() {
-//                        return new PasswordAuthentication(Config.EMAIL, Config.PASSWORD);
-//                    }
-//                });
-
-        return null;
     }
 }
