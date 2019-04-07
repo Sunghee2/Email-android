@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                             for (int i = index; i < end; i++) {
                                 HashMap<String, String> map = new HashMap<>();
                                 map.put("KEY_EMAIL", "android" + i + "@gmail.com");
-                                map.put("KEY_PHONE", phoneNumberGenerating());
+//                                map.put("KEY_PHONE", phoneNumberGenerating());
 //                                getDatalist.add(map);
                             }
                             mAdapter.notifyDataSetChanged();
@@ -135,14 +135,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, SubActivity.class));
             }
         });
-    }
-
-    private String phoneNumberGenerating() {
-        int low = 100000000;
-        int high = 999999999;
-        int randomNumber = random.nextInt(high - low) + low;
-
-        return "0" + randomNumber;
     }
 }
 

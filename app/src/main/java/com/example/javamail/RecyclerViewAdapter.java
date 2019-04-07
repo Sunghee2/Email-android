@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -88,9 +89,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             Message msg = mDataset.get(position);
 
             ViewHolderRow userviewHolder = (ViewHolderRow) holder;
+            SimpleDateFormat df = new SimpleDateFormat("MM.dd");
 
             userviewHolder.textViewFrom.setText(msg.getFrom().toString());
-            userviewHolder.textViewDate.setText(msg.getDate().toString());
+            userviewHolder.textViewDate.setText(df.format(msg.getDate()));
             userviewHolder.textViewSubject.setText(msg.getSubject());
             userviewHolder.textViewBody.setText(msg.getBody().toString());
 
