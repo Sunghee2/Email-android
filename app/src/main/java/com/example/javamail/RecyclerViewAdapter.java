@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,9 @@ import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,10 +95,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ViewHolderRow userviewHolder = (ViewHolderRow) holder;
             SimpleDateFormat df = new SimpleDateFormat("MM.dd");
 
-            userviewHolder.textViewFrom.setText(msg.getFrom().toString());
+
+            String from = null;
+//            try {
+////                from = URLEncoder.encode(msg.getFrom().toString(), "EUC-KR");
+//                from = URLDecoder.decode(msg.getFrom(), "UTF-8");
+//            } catch (UnsupportedEncodingException e) {
+//                e.printStackTrace();
+//            }
+            from = msg.getFrom();
+            userviewHolder.textViewFrom.setText(from.substring(0, from.indexOf("<")));
             userviewHolder.textViewDate.setText(df.format(msg.getDate()));
             userviewHolder.textViewSubject.setText(msg.getSubject());
-            userviewHolder.textViewBody.setText(msg.getBody().toString());
+            userviewHolder.textViewBody.setText(msg.getBody());
+            Log.e("why?", msg.getBody());
 
             userviewHolder.bind(mDataset.get(position), listener);
         } else if(holder instanceof ViewHolderLoading) {

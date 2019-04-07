@@ -6,11 +6,11 @@ import javax.mail.Address;
 
 public class Message {
     private String subject;
-    private Address from;
+    private String from;
     private Date date;
     private String body;
 
-    public Message(String subject, Address from, Date date, String body) {
+    public Message(String subject, String from, Date date, String body) {
         this.subject = subject;
         this.from = from;
         this.date = date;
@@ -25,11 +25,11 @@ public class Message {
         this.subject = subject;
     }
 
-    public Address getFrom() {
+    public String getFrom() {
         return from;
     }
 
-    public void setFrom(Address from) {
+    public void setFrom(String from) {
         this.from = from;
     }
 
