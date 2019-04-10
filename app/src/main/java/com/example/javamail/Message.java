@@ -1,5 +1,6 @@
 package com.example.javamail;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.util.Date;
@@ -51,27 +52,45 @@ public class Message {
 
     public void setContentType(String contentType) { this.contentType = contentType; }
 
-    public Object getBody() {
+    public String getBody() {
         Log.e("type!!!", contentType);
+        String str = "";
         if(contentType.contains("multipart")) {
-            Multipart multipart = (Multipart) body;
+
 
             try {
-                int numberOfParts = multipart.getCount();
-                for (int partCount = 0; partCount < numberOfParts; partCount++) {
-                    MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
-                    body = part.getContent().toString();
-                }
+//                for(int partCount = 0; partCount < multipart.getCount(); partCount++) {
+//                    str = multipart.getBodyPart(partCount).toString();
+//                }
+                AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+                    @Override
+                    protected String doInBackground(Void... voids) {
+                        String str = "";
+                        Multipart multipart = (Multipart) body;
+                        try {
+                            int numberOfParts = multipart.getCount();
+                            for (int partCount = 0; partCount < numberOfParts; partCount++) {
+                                MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
+                                str = part.getContent().toString();
+//                                Log.e("...?", )
+                            }
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                        return str;
+                    }
+                };
+                str = asyncTask.execute().get();
             } catch(Exception e) {
                 e.printStackTrace();
             }
         } else if(contentType.contains("TEXT/PLAIN") || contentType.contains("TEXT/HTML")) {
             if(body != null) {
-                body = body.toString();
+                str = body.toString();
             }
         }
-        Log.e("body", body.toString());
-        return body;
+        Log.e("body", str);
+        return str;
     }
 
     public void setBody(Object body) {

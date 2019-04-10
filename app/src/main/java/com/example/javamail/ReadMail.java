@@ -66,10 +66,10 @@ public class ReadMail extends AsyncTask<Integer, Void, ArrayList<com.example.jav
                     Message msg = messages[i];
 //                    Log.e("????", msg.toString());
 //                    Log.e("????", msg.getFrom()[0].toString());
-                    subject = msg.getSubject();
+//                    subject = msg.getSubject();
 //
-                    String contentType = msg.getContentType();
-                    Object messageContent = msg.getContent();
+//                    String contentType = msg.getContentType();
+//                    Object messageContent = msg.getContent();
 
 //                    Log.e("email", "s : " + subject + " c : " + contentType);
 
@@ -87,7 +87,7 @@ public class ReadMail extends AsyncTask<Integer, Void, ArrayList<com.example.jav
 //                        }
 //                    }
 
-                    list.add(new com.example.javamail.Message(subject, MimeUtility.decodeText(msg.getFrom()[0].toString()), msg.getReceivedDate(), contentType, messageContent));
+                    list.add(new com.example.javamail.Message(msg.getSubject(), MimeUtility.decodeText(msg.getFrom()[0].toString()), msg.getReceivedDate(), msg.getContentType(), msg.getContent()));
                     long end = System.currentTimeMillis();
                     Log.e("time", ""+(end - start)/1000.0);
 //                    Log.e("email!!", "Subject : " + subject);
