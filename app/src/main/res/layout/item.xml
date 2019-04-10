@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="5dp"
         android:id="@+id/textViewBody"
-        android:text="body"
+        android:text=""
         android:textSize="15sp"
         android:maxLines="2"
         android:ellipsize="end"/>

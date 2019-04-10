@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     intent.putExtra("from", msg.getFrom());
                     intent.putExtra("subject", msg.getSubject());
+                    intent.putExtra("date", msg.getDate());
                     intent.putExtra("body", msg.getBody());
 //                    body = msg.getBody();
                 } catch (Exception e) {

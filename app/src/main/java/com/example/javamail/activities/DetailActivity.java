@@ -15,11 +15,15 @@ import android.widget.TextView;
 import com.example.javamail.Constants;
 import com.example.javamail.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class DetailActivity extends AppCompatActivity {
 
     private TextView textViewFrom;
     private TextView textViewSubject;
-    private TextView textViewBody;
+    private TextView textViewDate;
+//    private TextView textViewBody;
     private WebView webView;
 
     @Override
@@ -29,11 +33,13 @@ public class DetailActivity extends AppCompatActivity {
 
         textViewFrom = (TextView) findViewById(R.id.textViewFrom);
         textViewSubject = (TextView) findViewById(R.id.textViewSubject);
-        textViewBody = (TextView) findViewById(R.id.textViewBody);
+        textViewDate = (TextView) findViewById(R.id.textViewDate);
+//        textViewBody = (TextView) findViewById(R.id.textViewBody);
 
         webView = (WebView) findViewById(R.id.webView);
 
         Intent intent = getIntent();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy년 MM월 dd일 HH:mm");
 
         textViewFrom.setText(intent.getExtras().getString("from"));
         textViewSubject.setText(intent.getExtras().getString("subject"));
@@ -42,7 +48,7 @@ public class DetailActivity extends AppCompatActivity {
 //        } else {
 //            textViewBody.setText(Html.fromHtml(intent.getExtras().getString("body")));
 //        }
-
+        textViewDate.setText(df.format((Date) intent.getSerializableExtra("date")));
         webView.loadData(intent.getExtras().getString("body"), "text/html", "UTF-8");
 
     }
