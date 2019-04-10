@@ -20,11 +20,19 @@ import javax.mail.internet.MimeUtility;
 import com.sun.mail.imap.IMAPFolder;
 
 public class ReadMail extends AsyncTask<Integer, Void, ArrayList<com.example.javamail.Message>> {
+
+    public int totalMessages;
     private Session session;
     private Store store;
     private IMAPFolder folder;
     private String subject;
     private ArrayList<com.example.javamail.Message> list;
+
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+    }
+
 
     @Override
     protected ArrayList<com.example.javamail.Message> doInBackground(Integer... integers) {
@@ -44,12 +52,14 @@ public class ReadMail extends AsyncTask<Integer, Void, ArrayList<com.example.jav
                 folder.open(Folder.READ_WRITE);
                 Message[] messages = folder.getMessages();
                 list = new ArrayList<com.example.javamail.Message>();
+                totalMessages = folder.getMessageCount();
 //                Log.e("email!!", "No of Messages : " + folder.getMessageCount());
 //                Log.e("email!!", "No of Unread Messages : " + folder.getUnreadMessageCount());
 //                Log.e("email!!", "length : " + messages.length);
 //                Log.e("sdafsfa", "afdasd" + integers[0]);
                 int start_num = messages.length - 1 - Integer.parseInt(integers[0].toString());
-                for(int i = start_num; i >= (start_num - 10 >= 0? start_num - 10 : 0); i--) {
+                Log.e("email!!!!", "start : " + start_num +" end : " + (start_num - 15 >= 0? start_num - 15 : 0));
+                for(int i = start_num; i > (start_num - 15 >= 0? start_num - 15 : 0); i--) {
 //                    Log.e("email!!", "*****************************************************************************");
 //                    Log.e("email!!", "MESSAGE : " + (i + 1) + ":");
 
@@ -60,7 +70,7 @@ public class ReadMail extends AsyncTask<Integer, Void, ArrayList<com.example.jav
 //
                     String contentType = msg.getContentType();
                     String messageContent = "";
-//
+
                     if(contentType.contains("multipart")) {
                         Multipart multipart = (Multipart) msg.getContent();
                         int numberOfParts = multipart.getCount();
@@ -68,7 +78,7 @@ public class ReadMail extends AsyncTask<Integer, Void, ArrayList<com.example.jav
                             MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
                             messageContent = part.getContent().toString();
                         }
-                    } else if(contentType.contains("text/plain") || contentType.contains("text/html")) {
+                    } else if(contentType.contains("TEXT/PLAIN") || contentType.contains("TEXT/HTML")) {
                         Object content = msg.getContent();
                         if(content != null) {
                             messageContent = content.toString();

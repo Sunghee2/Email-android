@@ -55,7 +55,8 @@ public class SendMail extends AsyncTask<Void,Void,Void> {
         send_props.put("mail.smtp.auth", "true");
         send_props.put("mail.smtp.port", "465");
 
-        session = Session.getDefaultInstance(send_props,
+//        session = Session.getDefaultInstance(send_props,
+        session = Session.getInstance(send_props,
                 new javax.mail.Authenticator() {
                     //Authenticating the password
                     protected PasswordAuthentication getPasswordAuthentication() {

@@ -67,6 +67,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
                 if(!isLoading && (lastVisibleItem + visibleThreshold) >= totalItemCount) {
                     if(onLoadMoreListener != null) {
+                        Log.e("/????", "last : " + lastVisibleItem + " visi : " + visibleThreshold + " total : " + totalItemCount);
+
                         onLoadMoreListener.onLoadMore();
                     }
                     isLoading = true;
@@ -93,22 +95,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             Message msg = mDataset.get(position);
 
             ViewHolderRow userviewHolder = (ViewHolderRow) holder;
-            SimpleDateFormat df = new SimpleDateFormat("MM.dd");
+            SimpleDateFormat df = new SimpleDateFormat("yy.MM.dd");
 
-
-            String from = null;
-//            try {
-////                from = URLEncoder.encode(msg.getFrom().toString(), "EUC-KR");
-//                from = URLDecoder.decode(msg.getFrom(), "UTF-8");
-//            } catch (UnsupportedEncodingException e) {
-//                e.printStackTrace();
-//            }
-            from = msg.getFrom();
+            String from = msg.getFrom();
             userviewHolder.textViewFrom.setText(from.substring(0, from.indexOf("<")));
             userviewHolder.textViewDate.setText(df.format(msg.getDate()));
             userviewHolder.textViewSubject.setText(msg.getSubject());
             userviewHolder.textViewBody.setText(msg.getBody());
-            Log.e("why?", msg.getBody());
+//            Log.e("why?", msg.getBody());
 
             userviewHolder.bind(mDataset.get(position), listener);
         } else if(holder instanceof ViewHolderLoading) {
