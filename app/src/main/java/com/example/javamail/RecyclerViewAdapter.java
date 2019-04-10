@@ -101,7 +101,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             userviewHolder.textViewFrom.setText(from.substring(0, from.indexOf("<")));
             userviewHolder.textViewDate.setText(df.format(msg.getDate()));
             userviewHolder.textViewSubject.setText(msg.getSubject());
-            userviewHolder.textViewBody.setText(msg.getBody());
+//            userviewHolder.textViewBody.setText(msg.getBody());
 //            Log.e("why?", msg.getBody());
 
             userviewHolder.bind(mDataset.get(position), listener);

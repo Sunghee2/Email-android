@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 핸드폰 permission 확인
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
 
         if (ContextCompat.checkSelfPermission(this,
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             messages = rm.execute(0).get();
             totalMessages = rm.totalMessages;
-            currentMessages += 15;
+            currentMessages += 10;
 //            for(int i = 0; i < messages.size(); i++) {
 //                try {
 //                    String subject = messages.get(i).getSubject();
@@ -102,16 +101,20 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.setOnItemListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Message msg) {
-                String mEmail = "";
-                String mPhone = "";
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
 
                 try {
-                    mEmail = msg.getSubject();
-                    mPhone = msg.getBody();
+                    intent.putExtra("from", msg.getFrom());
+                    intent.putExtra("subject", msg.getSubject());
+                    intent.putExtra("body", msg.getBody().toString());
+//                    body = msg.getBody();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                Toast.makeText(MainActivity.this, "Clicked row: \nEmail: " + mEmail + ", Phone: " + mPhone, Toast.LENGTH_LONG).show();
+                if(rm.getStatus() == AsyncTask.Status.RUNNING) {
+                    rm.cancel(true);
+                }
+                startActivity(intent);
             }
         });
 
@@ -119,11 +122,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLoadMore() {
                 if (getDatalist.size() <= totalMessages) {
-                    getDatalist.add(null);
-                    mAdapter.notifyItemInserted(getDatalist.size() - 1);
-                    new Handler().postDelayed(new Runnable() {
+                    new Handler().post(new Runnable() {
                         @Override
                         public void run() {
+                            getDatalist.add(null);
+                            mAdapter.notifyItemInserted(getDatalist.size() - 1);
+
                             getDatalist.remove(getDatalist.size() - 1);
                             mAdapter.notifyItemRemoved(getDatalist.size());
 
@@ -132,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.e("how!!!", "" + currentMessages);
                             try {
                                 getDatalist.addAll(tmp_rm.execute(currentMessages).get());
-                                currentMessages += 15;
+                                currentMessages += 10;
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             } catch (ExecutionException e) {
@@ -150,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
                             mAdapter.notifyDataSetChanged();
                             mAdapter.setLoaded();
                         }
-                    }, 5000);
+                    });
                 } else {
                     Toast.makeText(MainActivity.this, "Loading data completed", Toast.LENGTH_LONG).show();
                 }

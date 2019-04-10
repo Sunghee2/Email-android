@@ -24,6 +24,8 @@
         <activity
             android:name=".activities.SubActivity"
             android:label="@string/sub_name"/>
+
+        <activity android:name=".activities.DetailActivity" />
     </application>
 
 </manifest>

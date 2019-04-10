@@ -58,35 +58,38 @@ public class ReadMail extends AsyncTask<Integer, Void, ArrayList<com.example.jav
 //                Log.e("email!!", "length : " + messages.length);
 //                Log.e("sdafsfa", "afdasd" + integers[0]);
                 int start_num = messages.length - 1 - Integer.parseInt(integers[0].toString());
-                Log.e("email!!!!", "start : " + start_num +" end : " + (start_num - 15 >= 0? start_num - 15 : 0));
-                for(int i = start_num; i > (start_num - 15 >= 0? start_num - 15 : 0); i--) {
+                Log.e("email!!!!", "start : " + start_num +" end : " + (start_num - 10 >= 0? start_num - 10 : 0));
+                for(int i = start_num; i > (start_num - 10 >= 0? start_num - 10 : 0); i--) {
 //                    Log.e("email!!", "*****************************************************************************");
 //                    Log.e("email!!", "MESSAGE : " + (i + 1) + ":");
-
+                    long start = System.currentTimeMillis();
                     Message msg = messages[i];
 //                    Log.e("????", msg.toString());
 //                    Log.e("????", msg.getFrom()[0].toString());
                     subject = msg.getSubject();
 //
                     String contentType = msg.getContentType();
-                    String messageContent = "";
+                    Object messageContent = msg.getContent();
 
-                    if(contentType.contains("multipart")) {
-                        Multipart multipart = (Multipart) msg.getContent();
-                        int numberOfParts = multipart.getCount();
-                        for(int partCount = 0; partCount < numberOfParts; partCount++) {
-                            MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
-                            messageContent = part.getContent().toString();
-                        }
-                    } else if(contentType.contains("TEXT/PLAIN") || contentType.contains("TEXT/HTML")) {
-                        Object content = msg.getContent();
-                        if(content != null) {
-                            messageContent = content.toString();
-                        }
-                    }
+//                    Log.e("email", "s : " + subject + " c : " + contentType);
 
-                    list.add(new com.example.javamail.Message(subject, MimeUtility.decodeText(msg.getFrom()[0].toString()), msg.getReceivedDate(), messageContent));
+//                    if(contentType.contains("multipart")) {
+//                        Multipart multipart = (Multipart) msg.getContent();
+//                        int numberOfParts = multipart.getCount();
+//                        for(int partCount = 0; partCount < numberOfParts; partCount++) {
+//                            MimeBodyPart part = (MimeBodyPart) multipart.getBodyPart(partCount);
+//                            messageContent = part.getContent().toString();
+//                        }
+//                    } else if(contentType.contains("TEXT/PLAIN") || contentType.contains("TEXT/HTML")) {
+//                        Object content = msg.getContent();
+//                        if(content != null) {
+//                            messageContent = content.toString();
+//                        }
+//                    }
 
+                    list.add(new com.example.javamail.Message(subject, MimeUtility.decodeText(msg.getFrom()[0].toString()), msg.getReceivedDate(), contentType, messageContent));
+                    long end = System.currentTimeMillis();
+                    Log.e("time", ""+(end - start)/1000.0);
 //                    Log.e("email!!", "Subject : " + subject);
 //                    Log.e("email!!", "From : " + msg.getFrom()[0]);
 //                    Log.e("email!!", "To : " + msg.getAllRecipients()[0]);
@@ -95,7 +98,7 @@ public class ReadMail extends AsyncTask<Integer, Void, ArrayList<com.example.jav
 //                    Log.e("email!!", "Body : \n" + messageContent);
 //                    Log.e("email!!", msg.getContentType());
                 }
-                Log.e("klhj", "end!!!!!!");
+//                Log.e("klhj", "end!!!!!!");
             }
         } catch (Exception e) {
             e.printStackTrace();
