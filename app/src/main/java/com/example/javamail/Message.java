@@ -84,12 +84,15 @@ public class Message {
             } catch(Exception e) {
                 e.printStackTrace();
             }
-        } else if(contentType.contains("TEXT/PLAIN") || contentType.contains("TEXT/HTML")) {
+        } else if(contentType.contains("TEXT/PLAIN") || contentType.contains("TEXT/HTML") || contentType.contains("text/plain") || contentType.contains("text/html")) {
+            Log.e("here?", "not yet");
             if(body != null) {
+                Log.e("here?","yes!");
                 str = body.toString();
+                Log.e("wht", str);
             }
         }
-        Log.e("body", str);
+//        Log.e("body", str);
         return str;
     }
 

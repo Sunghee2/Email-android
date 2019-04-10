@@ -44,7 +44,7 @@ public class ReadMail extends AsyncTask<Integer, Void, ArrayList<com.example.jav
             session = Session.getDefaultInstance(read_props, null);
 
             store = session.getStore("imaps");
-            store.connect("imap.gmail.com", Config.EMAIL, Config.PASSWORD);
+            store.connect(Config.READ_HOST, Config.READ_EMAIL, Config.READ_PASSWORD);
 
             folder = (IMAPFolder) store.getFolder("inbox");
 
@@ -71,7 +71,7 @@ public class ReadMail extends AsyncTask<Integer, Void, ArrayList<com.example.jav
 //                    String contentType = msg.getContentType();
 //                    Object messageContent = msg.getContent();
 
-//                    Log.e("email", "s : " + subject + " c : " + contentType);
+                    Log.e("email", "s : " + msg.getSubject());
 
 //                    if(contentType.contains("multipart")) {
 //                        Multipart multipart = (Multipart) msg.getContent();

@@ -98,7 +98,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             SimpleDateFormat df = new SimpleDateFormat("yy.MM.dd");
 
             String from = msg.getFrom();
-            userviewHolder.textViewFrom.setText(from.substring(0, from.indexOf("<")));
+            userviewHolder.textViewFrom.setText(from.substring(0, from.indexOf("<") != -1 ? from.indexOf("<") : from.length()));
             userviewHolder.textViewDate.setText(df.format(msg.getDate()));
             userviewHolder.textViewSubject.setText(msg.getSubject());
 //            userviewHolder.textViewBody.setText(msg.getBody());
