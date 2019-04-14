@@ -3,11 +3,19 @@ package com.example.javamail;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.sun.mail.util.BASE64DecoderStream;
+
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Date;
 
 import javax.mail.Address;
+import javax.mail.BodyPart;
 import javax.mail.Multipart;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
 
 public class Message {
     private String subject;
@@ -55,8 +63,34 @@ public class Message {
     public String getBody() {
         Log.e("type!!!", contentType);
         String str = "";
-        if(contentType.contains("multipart")) {
-
+        if(contentType.contains("multipart/MIXED")) {
+            MimeMultipart mimeMultipart = (MimeMultipart) body;
+            try {
+                for (int i = 0; i < mimeMultipart.getCount(); i++) {
+                    BodyPart part = mimeMultipart.getBodyPart(i);
+                    str = part.getContent().toString();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+//            BASE64DecoderStream base64DecoderStream = (BASE64DecoderStream) body;
+//            File f = new File("image" + new Date().getTime() + ".jpg");
+//            try{
+//                DataOutputStream output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
+//                byte[] buffer = new byte[1024];
+//                int bytesRead;
+//
+//                while ((bytesRead = base64DecoderStream.read(buffer)) != -1) {
+//                    output.write(buffer, 0, bytesRead);
+//                }
+//            } catch(Exception e) {
+//                e.printStackTrace();
+//            }
+//            byte[] byteArray = IOUtils.toByteArray(base64DecoderStream);
+//            byte[] encodeBase64 = Base64.encodeBase64(byteArray);
+//            base64Content[0] = new String(encodeBase64, "UTF-8");
+//            base64Content[1] = getContentTypeString(part);
+        } else if(contentType.contains("multipart")) {
 
             try {
 //                for(int partCount = 0; partCount < multipart.getCount(); partCount++) {
@@ -85,11 +119,8 @@ public class Message {
                 e.printStackTrace();
             }
         } else if(contentType.contains("TEXT/PLAIN") || contentType.contains("TEXT/HTML") || contentType.contains("text/plain") || contentType.contains("text/html")) {
-            Log.e("here?", "not yet");
             if(body != null) {
-                Log.e("here?","yes!");
                 str = body.toString();
-                Log.e("wht", str);
             }
         }
 //        Log.e("body", str);

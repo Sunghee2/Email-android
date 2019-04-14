@@ -5,15 +5,23 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 
 public class SendMail extends AsyncTask<Void,Void,Void> {
@@ -23,6 +31,7 @@ public class SendMail extends AsyncTask<Void,Void,Void> {
     private String email;
     private String subject;
     private String message;
+    private File[] attachFiles;
     private ProgressDialog progressDialog;
 
     public SendMail(Context context, String email, String subject, String message){
@@ -30,6 +39,14 @@ public class SendMail extends AsyncTask<Void,Void,Void> {
         this.email = email;
         this.subject = subject;
         this.message = message;
+    }
+
+    public SendMail(Context context, String email, String subject, String message, File[] attachFiles){
+        this.context = context;
+        this.email = email;
+        this.subject = subject;
+        this.message = message;
+        this.attachFiles = attachFiles;
     }
 
     @Override
@@ -70,7 +87,37 @@ public class SendMail extends AsyncTask<Void,Void,Void> {
             mm.setFrom(new InternetAddress(Config.SEND_EMAIL));
             mm.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
             mm.setSubject(subject);
-            mm.setText(message);
+//            mm.setText(message);
+            if(attachFiles != null) {
+                BodyPart bodyPart1 = new MimeBodyPart();
+                bodyPart1.setText(message);
+
+                MimeBodyPart bodyPart2 = new MimeBodyPart();
+                String filename = "";
+                DataSource source = new FileDataSource(filename);
+                bodyPart2.setDataHandler(new DataHandler(source));
+                bodyPart2.setFileName(filename);
+
+                Multipart multipart = new MimeMultipart();
+                multipart.addBodyPart(bodyPart1);
+                multipart.addBodyPart(bodyPart2);
+
+                mm.setContent(multipart);
+
+//                Multipart multipart = new MimeMultipart();
+//
+//                for(File attachFile : attachFiles) {
+//                    if(attachFile != null && attachFile.exists()) {
+//                        MimeBodyPart mimeBodyPart = new MimeBodyPart();
+//                        mimeBodyPart.setDataHandler(new DataHandler(new FileDataSource(attachFile)));
+//                        multipart.addBodyPart(mimeBodyPart);
+//                    }
+//                }
+//
+//                mm.setContent(multipart);
+            } else {
+
+            }
 
             Transport.send(mm);
 
