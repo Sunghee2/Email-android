@@ -31,7 +31,7 @@ public class SendMail extends AsyncTask<Void,Void,Void> {
     private String email;
     private String subject;
     private String message;
-    private File[] attachFiles;
+    private String filePath;
     private ProgressDialog progressDialog;
 
     public SendMail(Context context, String email, String subject, String message){
@@ -41,12 +41,12 @@ public class SendMail extends AsyncTask<Void,Void,Void> {
         this.message = message;
     }
 
-    public SendMail(Context context, String email, String subject, String message, File[] attachFiles){
+    public SendMail(Context context, String email, String subject, String message, String filePath){
         this.context = context;
         this.email = email;
         this.subject = subject;
         this.message = message;
-        this.attachFiles = attachFiles;
+        this.filePath = filePath;
     }
 
     @Override
@@ -88,12 +88,12 @@ public class SendMail extends AsyncTask<Void,Void,Void> {
             mm.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
             mm.setSubject(subject);
 //            mm.setText(message);
-            if(attachFiles != null) {
+            if(filePath != null) {
                 BodyPart bodyPart1 = new MimeBodyPart();
                 bodyPart1.setText(message);
 
                 MimeBodyPart bodyPart2 = new MimeBodyPart();
-                String filename = "";
+                String filename = filePath;
                 DataSource source = new FileDataSource(filename);
                 bodyPart2.setDataHandler(new DataHandler(source));
                 bodyPart2.setFileName(filename);
